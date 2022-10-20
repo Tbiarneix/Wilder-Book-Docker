@@ -7,6 +7,7 @@ RUN apk add --no-cache curl
 COPY package*.json ./
 RUN npm i
 
-COPY . ./
+COPY src src
+COPY tsconfig.json tsconfig.json
 
 CMD npm start

@@ -33,7 +33,7 @@ export class WilderResolver {
     });
   }
 
-  @Query(() => Wilder)
+  @Mutation(() => Wilder)
   async getOneWilder(
     @Arg("id") id: number
   ): Promise<Wilder | ApolloError | null> {

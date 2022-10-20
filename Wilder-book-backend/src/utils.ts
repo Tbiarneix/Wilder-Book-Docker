@@ -4,11 +4,14 @@ import { Skill } from "./entity/skill";
 import { Grade } from "./entity/grade";
 
 const dataSource = new DataSource({
-  type: "sqlite",
-  database: "./wildersdb.sqlite",
+  type: "postgres",
+  host: "db",
+  port: 5432,
+  username: "postgres",
+  password: "example",
+  database: "postgres",
   synchronize: true,
   entities: [Wilder, Skill, Grade],
-  logging: ["query", "error"],
 });
 
 export default dataSource;

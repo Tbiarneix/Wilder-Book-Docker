@@ -1,17 +1,43 @@
 services:
+  db:
+    image: postgres
+    restart: always
+    volumes:
+      - ./db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: "postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: example
+      PGDATA: /var/lib/postgresql/data/pgdata
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 10s
+      retries: 15
+      start_period: 30s
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8081:8080
+    depends_on:
+      "db":
+        condition: service_healthy
   server:
     build: ./Wilder-book-backend
     ports:
       - 5000:5000
     volumes:
       - ./Wilder-book-backend/src/:/app/src/
-      - ./Wilder-book-backend/wildersdb.sqlite/:/app/wildersdb.sqlite/
+    depends_on:
+      "db":
+        condition: service_healthy
     healthcheck:
-      test: "curl --request POST \ --header 'content-type: application/json' \ --url http://localhost:5000/ \ --data '{\"query\":\"query { __typename }\"}'"
-      interval: 2s
+      test: "curl --fail --request POST \ --header 'content-type: application/json' \ --url http://localhost:5000/ \ --data '{\"query\":\"query { __typename }\"}' || exit 1"
+      interval: 5s
       timeout: 10s
-      retries: 5
-      start_period: 1s
+      retries: 15
+      start_period: 30s
   client:
     build: ./Wilder-book-frontend
     ports:

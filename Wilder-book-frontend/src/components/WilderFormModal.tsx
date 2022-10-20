@@ -26,16 +26,28 @@ const CREATE_WILDER = gql`
 `;
 
 const GET_WILDER = gql`
-  query GetOneWilder($getOneWilderId: Float!) {
+  mutation GetOneWilder($getOneWilderId: Float!) {
     getOneWilder(id: $getOneWilderId) {
+      id
       name
       description
       grade {
+        id
         grade
         skill {
           name
         }
       }
+    }
+  }
+`;
+
+const UPDATE_WILDER = gql`
+  mutation UpdateWilder($data: UpdateWilderInput!) {
+    updateWilder(data: $data) {
+      id
+      name
+      description
     }
   }
 `;
@@ -64,17 +76,20 @@ const WilderFormModal = ({ id }: IWilderFormModal) => {
     refetchQueries: [{ query: GET_WILDERS }],
   });
 
-  // const [getOneWilder, { loading, error, data }] = useQuery(GET_WILDER);
+  // const [getOneWilder, { loading, error, data }] = useMutation(GET_WILDER);
+
+  // const oneWilderDatas = async () => {
+  //   return await getOneWilder({
+  //     variables: { getOneWilderId: id },
+  //   });
+  // };
 
   // useEffect(() => {
   //   if (id !== undefined) {
-  //     const existingWilderDatas = await getOneWilder({
-  //       variables: { deleteSkillId: id },
-  //     });
-  //     setName(data.name);
-  //     setDescription(data.description);
+  //     setName(data.getOneWilder.name);
+  //     setDescription(data.getOneWilder.description);
   //     setSkillsInformations(
-  //       data.grade.map((skill: IGradeFromDb) => ({
+  //       data.getOneWilder.grade.map((skill: IGradeFromDb) => ({
   //         id: skill.id,
   //         skillName: skill.skill.name,
   //         grade: skill.grade,
@@ -83,42 +98,11 @@ const WilderFormModal = ({ id }: IWilderFormModal) => {
   //   }
   // }, []);
 
-  // useEffect(() => {
-  //   if (id !== undefined) {
-  //     axios
-  //       .get("http://localhost:5000/api/wilders")
-  //       .then((res) => res.data)
-  //       .then((data) =>
-  //         data.filter((wilder: IWilderFromDb) => wilder.id === id)
-  //       )
-  //       .then((filteredData) => {
-  //         setName(filteredData[0].name),
-  //         setDescription(filteredData[0].description),
-  //         setSkillsInformations(
-  //             filteredData[0].grade.map((skill: IGradeFromDb) => ({
-  //               id: skill.id,
-  //               skillName: skill.skill.name,
-  //               grade: skill.grade,
-  //             }))
-  //           );
-  //       });
-  //   }
-  // }, []);
-
   const postAWilder = async (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
     await createWilder({
       variables: { data: { name: name, description: description } },
     });
-
-    // skillsInformations.forEach(async (skill) => {
-    //   await axios.post("http://localhost:5000/api/grade", {
-    //     grade: skill.grade,
-    //     wilderId: newWilder.data.id,
-    //     skillName: skill.skillName,
-    //   });
-    // });
-
     setName("");
     setDescription("");
     setModal(false);
