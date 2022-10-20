@@ -6,11 +6,11 @@ services:
       - ./db:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: "postgres"
-      POSTGRES_USER: "postgres"
+      PGUSER: "postgres"
       POSTGRES_PASSWORD: example
       PGDATA: /var/lib/postgresql/data/pgdata
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      test: ["CMD-SHELL", "pg_isready"]
       interval: 5s
       timeout: 10s
       retries: 15
