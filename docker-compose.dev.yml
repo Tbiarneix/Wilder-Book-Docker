@@ -1,0 +1,23 @@
+services:
+  server:
+    build: ./Wilder-book-backend
+    ports:
+      - 5000:5000
+    volumes:
+      - ./Wilder-book-backend/src/:/app/src/
+      - ./Wilder-book-backend/wildersdb.sqlite/:/app/wildersdb.sqlite/
+    healthcheck:
+      test: "curl --request POST \ --header 'content-type: application/json' \ --url http://localhost:5000/ \ --data '{\"query\":\"query { __typename }\"}'"
+      interval: 2s
+      timeout: 10s
+      retries: 5
+      start_period: 1s
+  client:
+    build: ./Wilder-book-frontend
+    ports:
+      - 8080:8080
+    volumes:
+      - ./Wilder-book-frontend/src:/app/src/
+    depends_on:
+      "server":
+        condition: service_healthy
